@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 
 function App() {
   const [input, setInput] = useState('');
@@ -6,6 +6,18 @@ function App() {
     'Pagar a conta de luz',
     'Estudar React'
   ]);
+
+  useEffect(() => {
+    const tarefasStorage = localStorage.getItem('@tarefa');
+
+    if(tarefasStorage){
+      setTarefas(JSON.parse(tarefasStorage));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('@tarefa', JSON.stringify(tarefas));
+  }, [tarefas]);
 
   function randleRegister(e){
     e.preventDefault();
