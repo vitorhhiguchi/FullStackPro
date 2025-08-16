@@ -1,6 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { db } from './firebaseConnection'
-import { doc, setDoc, addDoc, getDoc, getDocs, updateDoc, deleteDoc,collection } from 'firebase/firestore'
+import { 
+  doc, 
+  setDoc, 
+  addDoc, 
+  getDoc, 
+  getDocs, 
+  updateDoc, 
+  deleteDoc, 
+  collection,
+  onSnapshot
+} from 'firebase/firestore'
 import './app.css'
 
 function App() {
@@ -10,6 +20,28 @@ function App() {
   const [idPost, setIdPost] = useState('');
 
   const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    async function loadPosts() {
+      // Devemos saber quando usar o onSnapshot, pois não podemos usar em tudo, se não
+      // pesa a aplicação. Um exemplo bom de onde sempre é bom ter dados frescos, é um gráfico.
+      const unsub = onSnapshot(collection(db, "posts"), (snapshot) => {
+        let listaPost = []
+      
+        snapshot.forEach((doc) => {
+          listaPost.push({
+            id: doc.id,
+            titulo: doc.data().titulo,
+            autor: doc.data().autor,
+          })
+        })
+
+        setPosts(listaPost);
+      })
+    }
+
+    loadPosts();
+  }, [])
 
   async function handleAdd(){
     // Exemplo de quando queremos acessar exatamente uma coleção e criar um doc
