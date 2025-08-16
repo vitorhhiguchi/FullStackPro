@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { db } from './firebaseConnection'
-import { doc, setDoc, addDoc, getDoc, getDocs, updateDoc, collection } from 'firebase/firestore'
+import { doc, setDoc, addDoc, getDoc, getDocs, updateDoc, deleteDoc,collection } from 'firebase/firestore'
 import './app.css'
 
 function App() {
@@ -89,6 +89,17 @@ function App() {
     })
   }
 
+  async function excluirPost(id) {
+    const docRef = doc(db, "posts", id);
+    await deleteDoc(docRef)
+    .then((snapshot) => {
+      alert("POST DELETADO COM SUCESSO!")
+    })
+    .catch((error) => {
+      alert("NÃO FOI POSSIVEL EXCLUIR!")
+    })
+  }
+
   return (
     <div>
       <h1>ReactJS + Firebase :)</h1>
@@ -131,7 +142,10 @@ function App() {
                 <li key={post.id}>
                   <strong>ID: {post.id}</strong> <br/>
                   <span>Titulo: {post.titulo}</span> <br/>
-                  <span>Autor: {post.autor}</span> <br/> <br/>
+                  <span>Autor: {post.autor}</span> <br/>
+                  {/* Aqui é usado uma função anonima pelo fato que precisamos passar um argumento, e se não usassemos ele
+                  toda vez que renderizar a página já iria excluir o post */}
+                  <button onClick={ () => excluirPost(post.id) }>Excluir</button> <br/> <br/>
                 </li>
               )
             })
